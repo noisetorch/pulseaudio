@@ -2,7 +2,7 @@ package pulseaudio
 
 import "io"
 
-//Source contains information about a source in pulseaudio, e.g. a microphone
+// Source contains information about a source in pulseaudio, e.g. a microphone
 type Source struct {
 	Index              uint32
 	Name               string
@@ -28,7 +28,7 @@ type Source struct {
 	Formats            []formatInfo
 }
 
-//ReadFrom deserialized a PA source packet
+// ReadFrom deserialized a PA source packet
 func (s *Source) ReadFrom(r io.Reader) (int64, error) {
 	var portCount uint32
 	err := bread(r,
@@ -106,4 +106,10 @@ func (c *Client) Sources() ([]Source, error) {
 		sources = append(sources, source)
 	}
 	return sources, nil
+}
+
+func (c *Client) SetDefaultSource(sourceName string) error {
+	_, err := c.request(commandSetDefaultSource,
+		stringTag, []byte(sourceName), byte(0))
+	return err
 }

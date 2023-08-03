@@ -122,7 +122,7 @@ func (p *sinkPort) ReadFrom(r io.Reader) (int64, error) {
 		uint32Tag, &p.Available)
 }
 
-func (c *Client) setDefaultSink(sinkName string) error {
+func (c *Client) SetDefaultSink(sinkName string) error {
 	_, err := c.request(commandSetDefaultSink,
 		stringTag, []byte(sinkName), byte(0))
 	return err
