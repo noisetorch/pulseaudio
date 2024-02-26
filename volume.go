@@ -31,6 +31,7 @@ func (c *Client) SetVolume(volume float32) error {
 	return c.setSinkVolume(s.DefaultSink, cvolume{uint32(volume * 0xffff)})
 }
 
+// SetSinkVolume changes the current volume of the given sink to a specified value from 0 to 1 (or more than 1 - if volume should be boosted).
 func (c *Client) SetSinkVolume(sinkName string, volume float32) error {
 	return c.setSinkVolume(sinkName, cvolume{uint32(volume * 0xffff)})
 }
@@ -40,7 +41,7 @@ func (c *Client) setSinkVolume(sinkName string, cvolume cvolume) error {
 	return err
 }
 
-// ToggleMute reverse mute status
+// ToggleMute reverses the mute status of the default sink.
 func (c *Client) ToggleMute() (bool, error) {
 	s, err := c.ServerInfo()
 	if err != nil || s == nil {
@@ -56,21 +57,27 @@ func (c *Client) ToggleMute() (bool, error) {
 	return !muted, err
 }
 
-// ToggleMute reverse mute status
+// SetMute sets mute status of the default sink.
 func (c *Client) SetMute(b bool) error {
 	s, err := c.ServerInfo()
 	if err != nil || s == nil {
 		return err
 	}
 
+	return c.SetSinkMute(s.DefaultSink, b)
+}
+
+// SetSinkMute sets mute status of the given sink.
+func (c *Client) SetSinkMute(sinkName string, b bool) error {
 	muteCmd := '0'
 	if b {
 		muteCmd = '1'
 	}
-	_, err = c.request(commandSetSinkMute, uint32Tag, uint32(0xffffffff), stringTag, []byte(s.DefaultSink), byte(0), uint8(muteCmd))
+	_, err := c.request(commandSetSinkMute, uint32Tag, uint32(0xffffffff), stringTag, []byte(sinkName), byte(0), uint8(muteCmd))
 	return err
 }
 
+// Mute returns whether the default sink is muted.
 func (c *Client) Mute() (bool, error) {
 	s, err := c.ServerInfo()
 	if err != nil || s == nil {
