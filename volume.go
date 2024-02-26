@@ -64,11 +64,16 @@ func (c *Client) SetMute(b bool) error {
 		return err
 	}
 
+	return c.SetSinkMute(s.DefaultSink, b)
+}
+
+// SetSinkMute sets mute status of the given sink.
+func (c *Client) SetSinkMute(sinkName string, b bool) error {
 	muteCmd := '0'
 	if b {
 		muteCmd = '1'
 	}
-	_, err = c.request(commandSetSinkMute, uint32Tag, uint32(0xffffffff), stringTag, []byte(s.DefaultSink), byte(0), uint8(muteCmd))
+	_, err := c.request(commandSetSinkMute, uint32Tag, uint32(0xffffffff), stringTag, []byte(sinkName), byte(0), uint8(muteCmd))
 	return err
 }
 
